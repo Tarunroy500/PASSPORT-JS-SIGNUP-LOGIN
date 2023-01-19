@@ -8,7 +8,8 @@ const userSchema = new mongoose.Schema({
   },
   email:String,
   number:Number,
-
+  image:String,
+  
 })
 userSchema.plugin(plm)
 module.exports = mongoose.model("registeruser",userSchema);
