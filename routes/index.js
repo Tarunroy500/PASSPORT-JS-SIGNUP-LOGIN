@@ -29,7 +29,7 @@ router.post(
     successRedirect: "/profile",
     failureRedirect: "/login",
   }),
-  function (req, res, next) {}
+  function (req, res, next) { }
 );
 
 router.get("/profile", function (req, res, next) {
@@ -63,25 +63,33 @@ router.post("/edit", isLoggedIn, async function (req, res, next) {
 });
 
 router.get("/alluser", isLoggedIn, async function (req, res, next) {
-  let loggedinUser= await userSchema.findOne({username:req.session.passport.user})
+  let loggedinUser = await userSchema.findOne({ username: req.session.passport.user })
   let allUser = await userSchema.find();
   // console.log(allUser);
-  res.render("alluser", { allUser,loggedinUser });
+  res.render("alluser", { allUser, loggedinUser });
 });
 router.get("/friends/:id", isLoggedIn, async function (req, res, next) {
-  let loggedinUser= await userSchema.findOne({username:req.session.passport.user})
-  
-  let jisko_friend_banna_hai=await userSchema.findOne({_id:req.params.id})
+  let loggedinUser = await userSchema.findOne({ username: req.session.passport.user })
+
+  let jisko_friend_banna_hai = await userSchema.findOne({ _id: req.params.id })
   // console.log(jisko_friend_banna_hai);
-  await loggedinUser.friends.push(jisko_friend_banna_hai._id)
-  await jisko_friend_banna_hai.friends.push(loggedinUser)
+
+  console.log(loggedinUser.friends.includes(jisko_friend_banna_hai._id));
+  if (!loggedinUser.friends.includes(jisko_friend_banna_hai._id) && !jisko_friend_banna_hai.friends.includes(loggedinUser._id)) {
+    await loggedinUser.friends.push(jisko_friend_banna_hai._id)
+    await jisko_friend_banna_hai.friends.push(loggedinUser._id)
 
     await loggedinUser.save()
     await jisko_friend_banna_hai.save()
     res.redirect("/alluser")
+  } else {
+    res.send("already a friend")
+  }
 
-  
-  
+
+
+
+
 });
 
 
