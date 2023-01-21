@@ -9,7 +9,10 @@ const userSchema = new mongoose.Schema({
   email:String,
   number:Number,
   image:String,
-  
+  friends:{
+    type: Array,
+    default: [],
+  }
 })
 userSchema.plugin(plm)
 module.exports = mongoose.model("registeruser",userSchema);

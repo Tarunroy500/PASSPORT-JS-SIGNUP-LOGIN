@@ -63,10 +63,27 @@ router.post("/edit", isLoggedIn, async function (req, res, next) {
 });
 
 router.get("/alluser", isLoggedIn, async function (req, res, next) {
+  let loggedinUser= await userSchema.findOne({username:req.session.passport.user})
   let allUser = await userSchema.find();
   // console.log(allUser);
-  res.render("alluser", { allUser });
+  res.render("alluser", { allUser,loggedinUser });
 });
+router.get("/friends/:id", isLoggedIn, async function (req, res, next) {
+  let loggedinUser= await userSchema.findOne({username:req.session.passport.user})
+  
+  let jisko_friend_banna_hai=await userSchema.findOne({_id:req.params.id})
+  // console.log(jisko_friend_banna_hai);
+  await loggedinUser.friends.push(jisko_friend_banna_hai._id)
+  await jisko_friend_banna_hai.friends.push(loggedinUser)
+
+    await loggedinUser.save()
+    await jisko_friend_banna_hai.save()
+    res.redirect("/alluser")
+
+  
+  
+});
+
 
 function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
